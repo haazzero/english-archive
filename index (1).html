@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>하영's English Archive</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0b0c0e;
+      --card-bg: #16181d;
+      --card-border: #232732;
+      --text-main: #f3f4f6;
+      --text-sub: #9ca3af;
+      --accent-pink: #ff2a6d;
+      --accent-orange: #ff5722;
+      --accent-green: #10b981;
+      --accent-blue: #3b82f6;
+      --accent-red: #f87171;
+      --accent-yellow: #facc15;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg); color: var(--text-main); padding-bottom: 90px; }
+
+    /* Top Bar */
+    .top-header { padding: 40px 20px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: rgba(11, 12, 14, 0.95); backdrop-filter: blur(12px); z-index: 40; border-bottom: 1px solid #1a1c22; }
+    .top-title { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .pro-badge { font-size: 10px; background: var(--accent-pink); color: #fff; padding: 2px 7px; border-radius: 10px; font-weight: 800; }
+    .streak-pill { background: #1c1f26; border: 1px solid #2a2e39; padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 13px; color: var(--accent-orange); display: flex; align-items: center; gap: 6px; }
+
+    /* Container & Tab Views */
+    .view-content { display: none; padding: 18px 20px; flex-direction: column; gap: 20px; }
+    .view-content.active { display: flex; }
+
+    /* Cards */
+    .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 20px; position: relative; }
+    .section-title { font-size: 16px; font-weight: 700; color: #e5e7eb; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+
+    /* Stats 3-Grid */
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .stat-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 14px 10px; text-align: center; }
+    .stat-label { font-size: 11px; color: var(--text-sub); margin-bottom: 6px; font-weight: 600; }
+    .stat-value { font-size: 20px; font-weight: 900; }
+
+    /* Nice Try Drill Card */
+    .drill-card { background: #16181f; border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+    .drill-badge-before { color: var(--accent-red); font-size: 12px; font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+    .drill-badge-after { color: var(--accent-green); font-size: 12px; font-weight: 800; margin-top: 10px; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+    .drill-text-before { font-size: 14px; color: #d1d5db; text-decoration: line-through; }
+    .drill-text-after { font-size: 15px; font-weight: 700; color: #ffffff; }
+    .drill-exp { font-size: 12px; color: var(--text-sub); margin-top: 8px; border-top: 1px solid #252a38; padding-top: 8px; line-height: 1.5; }
+
+    /* Chunk list item */
+    .chunk-item { background: #181d28; border: 1px solid #232a3a; border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+    .chunk-en { font-size: 15px; font-weight: 700; color: #60a5fa; margin-bottom: 4px; }
+    .chunk-ko { font-size: 13px; color: var(--text-sub); }
+
+    /* Transcript Bubble */
+    .bubble { padding: 14px; border-radius: 16px; margin-bottom: 12px; line-height: 1.5; font-size: 14px; }
+    .bubble-di { background: #172033; border: 1px solid #23314f; color: #93c5fd; }
+    .bubble-ha { background: #281622; border: 1px solid #431f36; color: #f472b6; }
+    .bubble-ko { font-size: 12px; color: var(--text-sub); margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px; }
+
+    /* Interactive Quiz */
+    .quiz-container { background: #19172c; border: 1px solid #3c3468; border-radius: 20px; padding: 20px; }
+    .quiz-opt { width: 100%; padding: 13px 16px; border-radius: 14px; background: #242042; border: 1px solid #433b70; color: #e0e7ff; font-size: 14px; font-weight: 600; text-align: left; margin-top: 8px; cursor: pointer; transition: 0.2s; }
+    .quiz-opt:active { transform: scale(0.98); background: #312b5a; }
+    .quiz-opt.correct { background: #064e3b; border-color: #10b981; color: #a7f3d0; font-weight: bold; }
+    .quiz-opt.wrong { background: #7f1d1d; border-color: #ef4444; color: #fecaca; }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: rgba(14, 16, 20, 0.96); backdrop-filter: blur(15px); border-top: 1px solid #232732; display: flex; justify-content: space-around; align-items: center; padding-bottom: 12px; z-index: 50; }
+    .nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; color: #6b7280; font-size: 11px; font-weight: 700; cursor: pointer; padding: 6px 12px; border-radius: 14px; transition: 0.2s; }
+    .nav-btn i { font-size: 18px; }
+    .nav-btn.active { color: var(--accent-pink); }
+    .nav-btn.active i { transform: scale(1.1); }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="top-title">
+      <span>하영's English</span>
+      <span class="pro-badge">PRO</span>
+    </div>
+    <div class="streak-pill">
+      🔥 <span id="streakDisplay">1</span>일차
+    </div>
+  </header>
+
+  <!-- VIEW 1: HOME (스픽 학습 탭 & 데일리 리포트 메인) -->
+  <main id="view-home" class="view-content active">
+    <!-- Daily Mission -->
+    <div class="card" style="border-left: 4px solid var(--accent-blue);">
+      <div style="font-size: 11px; font-weight: 800; color: var(--accent-green); margin-bottom: 6px;">✦ 오늘의 3문장 인출 미션</div>
+      <div style="font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 4px;">"우리가 두 번째로 만난 거라 좀 어색했어"</div>
+      <div style="font-size: 13px; color: var(--text-sub); margin-bottom: 16px;">단답형 ❌ ➔ 이유와 감정을 붙여 2~3문장으로 스토리텔링 완성하기</div>
+      <button onclick="switchTab('quiz')" style="width: 100%; padding: 13px; background: #fff; color: #000; border: none; border-radius: 25px; font-weight: 800; font-size: 14px; cursor: pointer;">
+        1분 미션 퀴즈 풀기
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid-3">
+      <div class="stat-card">
+        <div class="stat-label">🔥 오늘 발화량</div>
+        <div class="stat-value" style="color: var(--accent-pink);">142<span style="font-size:12px;">단어</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">🎯 청크 인출율</div>
+        <div class="stat-value" style="color: var(--accent-yellow);">85<span style="font-size:12px;">%</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">⚡ 오픽 레벨</div>
+        <div class="stat-value" style="color: var(--accent-blue);">IM3<span style="font-size:10px;">➔IH</span></div>
+      </div>
+    </div>
+
+    <!-- Nice Try Before & After -->
+    <div>
+      <div class="section-title">
+        <span>🧡 [Nice Try] 1:1 정밀 교정 드릴</span>
+        <span style="font-size: 12px; color: var(--text-sub);">방금 통화 분석</span>
+      </div>
+
+      <div class="drill-card">
+        <div class="drill-badge-before"><i class="fas fa-times-circle"></i> 내가 한 말</div>
+        <div class="drill-text-before">"Because we just met only two times."</div>
+        <div class="drill-badge-after"><i class="fas fa-check-circle"></i> 원어민 자연스러운 표현</div>
+        <div class="drill-text-after">"It was a bit awkward because it was only our second time meeting."</div>
+        <div class="drill-exp">💡 <b>해설:</b> 'N번째 만남'은 <i>our second time meeting</i> 패턴을 쓰는 것이 가장 원어민다운 표현입니다.</div>
+      </div>
+
+      <div class="drill-card">
+        <div class="drill-badge-before"><i class="fas fa-times-circle"></i> 내가 한 말</div>
+        <div class="drill-text-before">"The wedding's buffet is so delicious."</div>
+        <div class="drill-badge-after"><i class="fas fa-check-circle"></i> 원어민 자연스러운 표현</div>
+        <div class="drill-text-after">"The food at the reception was amazing."</div>
+        <div class="drill-exp">💡 <b>해설:</b> 결혼식 피로연 식사는 <i>reception food</i>라고 하며, 이미 겪은 일이므로 과거 시제(was)를 사용합니다.</div>
+      </div>
+    </div>
+
+    <!-- Paraphrasing -->
+    <div>
+      <div class="section-title">✨ 이렇게도 말할 수 있어요 (패러프레이징)</div>
+      <div class="chunk-item">
+        <div class="chunk-en">"I had ox knee soup (Doganitang)."</div>
+        <div class="chunk-ko">음식 먹을 땐 ate보다 had를 쓰는 게 훨씬 자연스러워요!</div>
+      </div>
+      <div class="chunk-item">
+        <div class="chunk-en">"I felt so proud of my best friend."</div>
+        <div class="chunk-ko">친구가 너무 자랑스럽고 뿌듯했을 때 감정 묘사</div>
+      </div>
+      <div class="chunk-item">
+        <div class="chunk-en">"Yeah, that works for me!"</div>
+        <div class="chunk-ko">나 그거 완전 좋아 / 내 일정에 딱 맞아</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- VIEW 2: TRANSCRIPT (Haze 스타일 전체 대화 스크립트 & 1:1 번역) -->
+  <main id="view-transcript" class="view-content">
+    <div class="section-title">
+      <span>📜 Haze 스타일 전체 대화 스크립트</span>
+      <span style="font-size: 12px; color: var(--text-sub);">2026.11.15 통화</span>
+    </div>
+
+    <div class="bubble bubble-di">
+      <div style="font-weight: 800; font-size: 12px; margin-bottom: 4px; color: #60a5fa;">DI CAPRIO TUTOR</div>
+      <div>"Hi Hayoung! This is DiCaprio! How was your Saturday? Did you do anything fun?"</div>
+      <div class="bubble-ko">하영님 안녕하세요! 디카프리오예요! 토요일 어떻게 보내셨어요? 재미있는 일 있으셨나요?</div>
+    </div>
+
+    <div class="bubble bubble-ha">
+      <div style="font-weight: 800; font-size: 12px; margin-bottom: 4px; color: #f472b6;">하영 (HAYOUNG)</div>
+      <div>"I went to my friend's wedding! The food at the reception was amazing."</div>
+      <div class="bubble-ko">친구 결혼식 다녀왔어요! 피로연 뷔페가 정말 맛있었어요.</div>
+    </div>
+
+    <div class="bubble bubble-di">
+      <div style="font-weight: 800; font-size: 12px; margin-bottom: 4px; color: #60a5fa;">DI CAPRIO TUTOR</div>
+      <div>"That sounds wonderful! Did you meet a lot of old friends there?"</div>
+      <div class="bubble-ko">정말 좋았겠네요! 거기서 오랜 친구들 많이 만나셨나요?</div>
+    </div>
+
+    <div class="bubble bubble-ha">
+      <div style="font-weight: 800; font-size: 12px; margin-bottom: 4px; color: #f472b6;">하영 (HAYOUNG)</div>
+      <div>"It was a bit awkward because it was only our second time meeting."</div>
+      <div class="bubble-ko">우리가 두 번째로 만난 거라 조금 어색하긴 했어요.</div>
+    </div>
+
+    <div class="bubble bubble-di">
+      <div style="font-weight: 800; font-size: 12px; margin-bottom: 4px; color: #60a5fa;">DI CAPRIO TUTOR</div>
+      <div>"Haha, I totally understand that feeling! But you still had a great time celebrating, right?"</div>
+      <div class="bubble-ko">하하, 그 기분 완전 이해해요! 그래도 축하해주면서 좋은 시간 보내셨죠?</div>
+    </div>
+  </main>
+
+  <!-- VIEW 3: QUIZ (에빙하우스 1분 인터랙티브 복습 퀴즈) -->
+  <main id="view-quiz" class="view-content">
+    <div class="section-title">
+      <span>🎮 에빙하우스 1분 인터랙티브 퀴즈</span>
+      <span style="font-size: 12px; color: var(--accent-pink);">즉시 피드백</span>
+    </div>
+
+    <div class="quiz-container">
+      <div style="font-size: 13px; color: #a5b4fc; font-weight: bold; margin-bottom: 8px;">QUESTION 1</div>
+      <div style="font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 6px;">
+        "우리가 두 번째로 만난 거라 좀 <span style="color:var(--accent-yellow);">어색했어</span>."
+      </div>
+      <div style="font-size: 14px; color: #cbd5e1; font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; margin-bottom: 14px;">
+        "It was a bit <span id="q1-blank">______</span> because it was our second meeting."
+      </div>
+
+      <button class="quiz-opt" onclick="checkQ1(this, false)">1) delicious (맛있는)</button>
+      <button class="quiz-opt" onclick="checkQ1(this, true)">2) awkward (어색한, 서먹한)</button>
+      <button class="quiz-opt" onclick="checkQ1(this, false)">3) proud (자랑스러운)</button>
+
+      <div id="q1-feedback" style="display:none; margin-top:14px; font-size:13px; font-weight:bold;"></div>
+    </div>
+  </main>
+
+  <!-- VIEW 4: SYSTEM & PRD (하영 전용 스펙 및 프롬프트 명세) -->
+  <main id="view-spec" class="view-content">
+    <div class="section-title">⚙️ 하영 전용 시스템 스펙 & PRD v1.0</div>
+    <div class="card" style="line-height: 1.7; font-size: 13px; color: #cbd5e1;">
+      <h3 style="color:#60a5fa; font-size:15px; margin-bottom:8px;">📌 학생 프로필 & 맞춤 세팅</h3>
+      • <strong>이름/호칭</strong>: 정하영 (절대 '해영' 발음 금지, 또박또박 '하-영')<br>
+      • <strong>현재 레벨</strong>: 오픽 IM3 (목표: IH/AL 브레이크스루)<br>
+      • <strong>신경다양성 최적화</strong>: ADHD 친화형 (마이크로 도징, 5~7분 고밀도 세션, 제로 죄책감)<br><br>
+
+      <h3 style="color:#60a5fa; font-size:15px; margin-bottom:8px;">🚀 실전 통화 4대 핵심 엔진</h3>
+      1. <strong>3문장 룰 (3-Sentence Rule)</strong>: 단답형 탈피, 꼬리 질문으로 2~3문장 서사 발화 유도.<br>
+      2. <strong>자연스러운 리캐스팅 (Recasting)</strong>: 문법 오류 시 대화를 끊지 않고 올바른 표현을 자연스럽게 들려주기.<br>
+      3. <strong>우회 묘사 훈련 (Circumlocution)</strong>: 모르는 단어는 쉬운 단어로 돌려 설명하거나 물어보는 스킬 체화.<br>
+      4. <strong>데일리 루틴</strong>: 16:40 예습(핵심 청크 2개) ➔ 17:00 통화 ➔ 직후 리포트 및 웹앱 자동 갱신.
+    </div>
+  </main>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="switchTab('home')">
+      <i class="fas fa-home"></i>
+      <span>홈 리포트</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('transcript')">
+      <i class="fas fa-comments"></i>
+      <span>대화 스크립트</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('quiz')">
+      <i class="fas fa-gamepad"></i>
+      <span>1분 퀴즈</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('spec')">
+      <i class="fas fa-sliders"></i>
+      <span>시스템/PRD</span>
+    </button>
+  </nav>
+
+  <script>
+    function switchTab(tabName) {
+      document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      document.getElementById('view-' + tabName).classList.add('active');
+      const idx = ['home', 'transcript', 'quiz', 'spec'].indexOf(tabName);
+      if (idx !== -1) {
+        document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+      }
+      window.scrollTo(0, 0);
+    }
+
+    function checkQ1(btn, isCorrect) {
+      const fb = document.getElementById('q1-feedback');
+      const blank = document.getElementById('q1-blank');
+      fb.style.display = 'block';
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        blank.innerText = 'awkward';
+        blank.style.color = '#10b981';
+        fb.innerHTML = '🎉 정답입니다! awkward (어색한, 서먹한) - 장기기억에 저장되었어요!';
+        fb.style.color = '#10b981';
+      } else {
+        btn.classList.add('wrong');
+        fb.innerHTML = '😅 아쉬워요! 어색한 감정은 2번 awkward예요. 다시 골라보세요!';
+        fb.style.color = '#f87171';
+      }
+    }
+  </script>
+</body>
+</html>
