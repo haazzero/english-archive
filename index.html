@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>하영's English Archive - Speak x DiCaprio</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0b0c0e;
+      --card-bg: #16181d;
+      --card-border: #232732;
+      --text-main: #f3f4f6;
+      --text-sub: #9ca3af;
+      --accent-orange: #ff5722;
+      --accent-green: #10b981;
+      --accent-blue: #3b82f6;
+      --accent-red: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg); color: var(--text-main); padding-bottom: 90px; }
+    
+    /* Header */
+    .header { padding: 40px 20px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: rgba(11, 12, 14, 0.95); backdrop-filter: blur(12px); z-index: 50; border-bottom: 1px solid #1a1c22; }
+    .header-title { font-size: 19px; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 8px; }
+    .streak-badge { background: #1c1f26; border: 1px solid #2a2e39; padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 14px; color: var(--accent-orange); display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(255,87,34,0.15); }
+
+    .container { padding: 18px 20px; display: flex; flex-direction: column; gap: 22px; }
+
+    /* Mission Hero Card */
+    .mission-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 22px; position: relative; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+    .mission-card::before { content: ""; position: absolute; top: 0; left: 0; width: 60%; height: 4px; background: linear-gradient(90deg, #3b82f6, #60a5fa); border-radius: 4px; }
+    .tag-new { color: var(--accent-green); font-size: 11px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 8px; display: inline-block; }
+    .mission-title { font-size: 17px; font-weight: 700; color: #ffffff; line-height: 1.4; margin-bottom: 4px; }
+    .mission-sub { font-size: 13px; color: var(--text-sub); margin-bottom: 18px; }
+    .btn-continue { width: 100%; padding: 14px; background: #ffffff; color: #000000; border: none; border-radius: 28px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; }
+    .btn-continue:active { transform: scale(0.98); background: #e5e7eb; }
+
+    /* Stats 2-Grid */
+    .section-title { font-size: 16px; font-weight: 700; color: #e5e7eb; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .stat-box { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; cursor: pointer; transition: 0.2s; }
+    .stat-box:active { background: #1c1f26; }
+    .stat-label { font-size: 12px; color: var(--text-sub); font-weight: 600; margin-bottom: 8px; }
+    .stat-num { font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+
+    /* Weak points / Mistakes */
+    .weak-box { background: #191416; border: 1px solid #381c20; border-radius: 18px; padding: 18px; }
+    .weak-header { font-size: 13px; font-weight: 700; color: var(--accent-red); margin-bottom: 12px; display: flex; justify-content: space-between; }
+    .weak-item { padding: 10px 0; border-bottom: 1px solid #2a161a; }
+    .weak-item:last-child { border-bottom: none; }
+    .weak-before { font-size: 13px; color: #fca5a5; text-decoration: line-through; margin-bottom: 3px; }
+    .weak-after { font-size: 14px; font-weight: 700; color: var(--accent-green); }
+
+    /* Session History */
+    .report-list { display: flex; flex-direction: column; gap: 10px; }
+    .report-item { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+    .report-left { display: flex; align-items: center; gap: 14px; }
+    .report-icon { width: 42px; height: 42px; border-radius: 50%; background: #232834; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .report-name { font-size: 15px; font-weight: 600; color: #ffffff; margin-bottom: 4px; }
+    .report-date { font-size: 12px; color: #6b7280; }
+
+    /* Transcript Modal */
+    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; padding: 20px; overflow-y: auto; backdrop-filter: blur(8px); }
+    .modal.active { display: block; }
+    .modal-content { background: #16181f; border: 1px solid #2a3040; border-radius: 20px; padding: 22px; max-width: 500px; margin: 40px auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #2a3040; padding-bottom: 12px; }
+    .chat-bubble { margin-bottom: 14px; padding: 12px 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; }
+    .chat-di { background: #1e2433; border: 1px solid #2c354d; color: #93c5fd; }
+    .chat-ha { background: #2d1822; border: 1px solid #4a2135; color: #f472b6; }
+    .chat-ko { font-size: 12px; color: #9ca3af; margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 4px; }
+
+    /* PRD & Prompt Spec */
+    .spec-card { background: #121620; border: 1px solid #202b40; border-radius: 18px; padding: 18px; }
+    .spec-title { font-size: 13px; font-weight: 700; color: #60a5fa; margin-bottom: 8px; }
+    .spec-body { font-size: 12px; color: #94a3b8; line-height: 1.6; }
+
+    /* Bottom Nav */
+    .tab-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: rgba(16, 18, 22, 0.95); backdrop-filter: blur(15px); border-top: 1px solid #232732; display: flex; justify-content: space-around; align-items: center; padding-bottom: 12px; z-index: 50; }
+    .tab-pill { background: #232732; padding: 6px 24px; border-radius: 20px; display: flex; gap: 8px; align-items: center; color: #fff; font-size: 13px; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="header">
+    <div class="header-title">
+      <span>하영's English Archive</span>
+      <span style="font-size: 10px; background: #ff2a6d; color: #fff; padding: 2px 7px; border-radius: 10px;">PRO</span>
+    </div>
+    <div class="streak-badge">
+      🔥 <span id="streakDays">1</span>일차
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Today Mission (ADHD Focused) -->
+    <div class="mission-card">
+      <span class="tag-new">✦ 오늘의 3문장 인출 미션</span>
+      <div class="mission-title">"우리가 두 번째로 만난 거라 좀 어색했어"</div>
+      <div class="mission-sub">단답형 ❌ ➔ 이유와 감정을 붙여 2~3문장으로 완성하기</div>
+      <button class="btn-continue" onclick="runMission()">미션 테스트 시작</button>
+    </div>
+
+    <!-- Expressions & Saved -->
+    <div>
+      <div class="section-title">내 표현 아카이브</div>
+      <div class="grid-2">
+        <div class="stat-box" onclick="showExprs()">
+          <div class="stat-label">추천 청크 (Chunk)</div>
+          <div class="stat-num" style="color: var(--accent-green);">✦ <span>11</span></div>
+        </div>
+        <div class="stat-box" onclick="showSaved()">
+          <div class="stat-label">오답 보관함</div>
+          <div class="stat-num" style="color: var(--accent-blue);">🔖 <span>4</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mistakes Notebook -->
+    <div class="weak-box">
+      <div class="weak-header">
+        <span>🚨 집중 복습 오답노트 (IM3 ➔ IH/AL 도약)</span>
+        <span style="font-size: 11px; color: #9ca3af;">누적 4개</span>
+      </div>
+      <div class="weak-item">
+        <div class="weak-before">"Because we just met only two times."</div>
+        <div class="weak-after">➔ "It was only our second time meeting."</div>
+      </div>
+      <div class="weak-item">
+        <div class="weak-before">"The wedding's buffet is so delicious."</div>
+        <div class="weak-after">➔ "The food at the reception was amazing."</div>
+      </div>
+      <div class="weak-item">
+        <div class="weak-before">"I ate 도가니탕."</div>
+        <div class="weak-after">➔ "I had ox knee soup (Doganitang)."</div>
+      </div>
+      <div class="weak-item">
+        <div class="weak-before">"Yeah, just work for me."</div>
+        <div class="weak-after">➔ "Yeah, that works for me."</div>
+      </div>
+    </div>
+
+    <!-- Session History -->
+    <div>
+      <div class="section-title">
+        <span>날짜별 세션 리포트</span>
+        <span style="font-size: 12px; color: #6b7280;">터치해서 스크립트 보기</span>
+      </div>
+      <div class="report-list">
+        <div class="report-item" onclick="openTranscript('2026-11-15')">
+          <div class="report-left">
+            <div class="report-icon">🎙️</div>
+            <div>
+              <div class="report-name">주말 일상과 결혼식 피로연 후기</div>
+              <div class="report-date">2026.11.15 · 5분 9초 (총 142단어 발화)</div>
+            </div>
+          </div>
+          <div style="color: #9ca3af; font-size: 14px;">›</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- System & PRD Spec View -->
+    <div class="spec-card">
+      <div class="spec-title">⚙️ 하영 전용 시스템 스펙 & PRD v1.0</div>
+      <div class="spec-body">
+        • <strong>학생 프로필</strong>: 정하영 (오픽 IM3 ➔ 목표 IH/AL, ADHD 친화형)<br>
+        • <strong>호칭 철칙</strong>: '해영' 절대 금지, 정확한 '하-영(Ha-young)' 발음 보장<br>
+        • <strong>통화 엔진</strong>: 3문장 룰 + 자연스러운 리캐스팅 + 우회 묘사 훈련<br>
+        • <strong>데일리 루틴</strong>: 16:40 예습(청크 2개) ➔ 17:00 실전 통화 ➔ 즉시 퀴즈 & 웹앱 자동 갱신
+      </div>
+    </div>
+  </div>
+
+  <!-- Transcript Modal -->
+  <div class="modal" id="transcriptModal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 style="font-size: 16px; font-weight: 700;">📜 2026.11.15 전체 스크립트 & 번역</h3>
+        <button onclick="closeModal()" style="background:none; border:none; color:#fff; font-size:18px; cursor:pointer;">✕</button>
+      </div>
+      <div style="max-height: 400px; overflow-y: auto;">
+        <div class="chat-bubble chat-di">
+          <strong>DiCaprio:</strong> "Hi Hayoung! This is DiCaprio! How was your Saturday?"
+          <div class="chat-ko">하영님 안녕하세요! 디카프리오예요! 토요일 어떻게 보내셨어요?</div>
+        </div>
+        <div class="chat-bubble chat-ha">
+          <strong>하영:</strong> "I went to my friend's wedding! The food at the reception was amazing."
+          <div class="chat-ko">친구 결혼식 다녀왔어요! 피로연 뷔페가 정말 맛있었어요.</div>
+        </div>
+        <div class="chat-bubble chat-di">
+          <strong>DiCaprio:</strong> "That sounds wonderful! Did you meet a lot of old friends there?"
+          <div class="chat-ko">정말 좋았겠네요! 거기서 오랜 친구들 많이 만나셨나요?</div>
+        </div>
+        <div class="chat-bubble chat-ha">
+          <strong>하영:</strong> "It was a bit awkward because it was only our second time meeting."
+          <div class="chat-ko">우리가 두 번째로 만난 거라 조금 어색하긴 했어요.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <div class="tab-bar">
+    <div class="tab-pill">
+      <span>📖 학습 & 아카이브 메인</span>
+    </div>
+  </div>
+
+  <script>
+    function runMission() {
+      const ans = prompt("영어로 어떻게 말할까요?\n'우리가 두 번째로 만난 거라 좀 어색했어'");
+      if (!ans) return;
+      if (ans.toLowerCase().includes("awkward") || ans.toLowerCase().includes("second")) {
+        alert("🎉 정답입니다! 완벽해요!\n'It was a bit awkward because it was only our second time meeting.'");
+      } else {
+        alert("💡 힌트: awkward와 our second time meeting 패턴!\n정답: 'It was a bit awkward because it was only our second time meeting.'");
+      }
+    }
+    function openTranscript(date) {
+      document.getElementById('transcriptModal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('transcriptModal').classList.remove('active');
+    }
+    function showExprs() {
+      alert("✦ 누적 추천 청크 (11개):\n1. That works for me (그거 완전 좋아)\n2. Hit the sack (일찍 자러 가다)\n3. Got no clue (전혀 모르겠어)\n4. Looking back on it (돌이켜보면)...");
+    }
+    function showSaved() {
+      alert("🔖 오답노트 보관함 (4개):\n1. our second time meeting\n2. reception food\n3. I had ox knee soup\n4. that works for me");
+    }
+  </script>
+</body>
+</html>
